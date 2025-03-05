@@ -4,24 +4,18 @@ using Catalog.API.Models;
 namespace Catalog.API.Products.CreateProduct;
 
 public record CreateProductCommand(string Name, List<string> Category, string Description, string ImageFile, decimal Price)
-    : ICommand<CreateProductResult>;
+    : ICommand<CreateProductCommandResult>;
 
-public record CreateProductResult(Guid Id);
+public record CreateProductCommandResult(Guid Id);
 
-internal class CreateProductCommandHandler : ICommandHandler<CreateProductCommand, CreateProductResult>
+internal class CreateProductCommandHandler : ICommandHandler<CreateProductCommand, CreateProductCommandResult>
 {
-    public async Task<CreateProductResult> Handle(CreateProductCommand command, CancellationToken cancellationToken)
+    public async Task<CreateProductCommandResult> Handle(CreateProductCommand command, CancellationToken cancellationToken)
     {
-        var product = new Product
-        {
-            Name = command.Name,
-            Category = command.Category,
-            Description = command.Description,
-            ImageFile = command.ImageFile,
-            Price = command.Price
-        };
+        var product = command.Adapt<Product>();
+      
         //Business Logic to create a project
 
-        return await Task.FromResult(new CreateProductResult(product.Id));
+        return await Task.FromResult(new CreateProductCommandResult(product.Id));
     }
 }
