@@ -14,7 +14,7 @@ internal class UpdateProductCommandHandler(IDocumentSession documentSession, ILo
         var product = await documentSession.LoadAsync<Product>(command.Id, cancellationToken);
 
         if (product is null)
-            throw new ProductNotFoundException();
+            throw new ProductNotFoundException(command.Id);
 
         command.Adapt(product);
 
