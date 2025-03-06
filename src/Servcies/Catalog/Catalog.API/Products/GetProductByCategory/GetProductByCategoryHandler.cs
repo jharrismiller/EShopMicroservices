@@ -1,5 +1,4 @@
 ﻿using JasperFx.Core;
-using Marten.Util;
 
 namespace Catalog.API.Products.GetProductByCategory
 {
