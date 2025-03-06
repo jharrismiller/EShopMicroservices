@@ -1,4 +1,5 @@
 ﻿
+using Catalog.API.Products.GetProducts;
 using Polly.Telemetry;
 
 namespace Catalog.API.Products.GetProductByCategory
@@ -19,7 +20,12 @@ namespace Catalog.API.Products.GetProductByCategory
 
                 return Results.Ok(response);
 
-            });
+            })
+            .WithName("GetProductByCategory")
+            .Produces<GetProductByCategoryResponse>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .WithSummary("Get Product By Category")
+            .WithDescription("Get Product By Category");
         }
     }
 
