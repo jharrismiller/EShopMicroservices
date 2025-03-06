@@ -1,9 +1,13 @@
 using Catalog.API.Data;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using bb = BuildingBlocks;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var thisAssembly = typeof(Program).Assembly;
+
+var cnCatalog = builder.Configuration.GetConnectionString("CatalogDb")!;
 
 //Add Services to the container
 builder.Services.AddCarter();
@@ -15,7 +19,7 @@ builder.Services.AddMediatR(config =>
 });
 builder.Services.AddMarten(config =>
 {
-    config.Connection(builder.Configuration.GetConnectionString("CatalogDb")!);
+    config.Connection(cnCatalog);
 }).UseLightweightSessions();
 
 if (builder.Environment.IsDevelopment())
@@ -24,7 +28,8 @@ if (builder.Environment.IsDevelopment())
 builder.Services.AddValidatorsFromAssembly(thisAssembly);
 builder.Services.AddExceptionHandler<bb.Exceptions.Handler.CustomExceptionHandler>();
 builder.Services.AddProblemDetails();
-
+builder.Services.AddHealthChecks()
+    .AddNpgSql(cnCatalog);
 
 var app = builder.Build();
 
@@ -32,5 +37,11 @@ var app = builder.Build();
 app.MapCarter();
 
 app.UseExceptionHandler();
+
+app.UseHealthChecks("/health",
+    new HealthCheckOptions
+    {
+        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+    });
 
 app.Run();
