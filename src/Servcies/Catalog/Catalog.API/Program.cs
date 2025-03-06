@@ -1,7 +1,4 @@
-using Catalog.API;
-using Microsoft.AspNetCore.Diagnostics;
-using static System.Net.Mime.MediaTypeNames;
-using bb = BuildingBlocks.Behaviors;
+using bb = BuildingBlocks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,14 +9,14 @@ builder.Services.AddCarter();
 builder.Services.AddMediatR(config =>
 {
     config.RegisterServicesFromAssembly(thisAssembly);
-    config.AddOpenBehavior(typeof(bb.ValidationBehavior<,>));
+    config.AddOpenBehavior(typeof(bb.Behaviors.ValidationBehavior<,>));
 });
 builder.Services.AddMarten(config =>
 {
     config.Connection(builder.Configuration.GetConnectionString("CatalogDb")!);
 }).UseLightweightSessions();
 builder.Services.AddValidatorsFromAssembly(thisAssembly);
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddExceptionHandler<bb.Exceptions.Handler.CustomExceptionHandler>();
 builder.Services.AddProblemDetails();
 
 var app = builder.Build();
