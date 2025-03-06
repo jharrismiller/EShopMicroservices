@@ -1,16 +1,21 @@
+using bb = BuildingBlocks.Behaviors;
+
 var builder = WebApplication.CreateBuilder(args);
+
+var thisAssembly = typeof(Program).Assembly;
 
 //Add Services to the container
 builder.Services.AddCarter();
 builder.Services.AddMediatR(config =>
 {
-    config.RegisterServicesFromAssembly(typeof(Program).Assembly);
+    config.RegisterServicesFromAssembly(thisAssembly);
+    config.AddOpenBehavior(typeof(bb.ValidationBehavior<,>));
 });
-builder.Services.AddMarten(opts =>
+builder.Services.AddMarten(config =>
 {
-    opts.Connection(builder.Configuration.GetConnectionString("CatalogDb")!);
+    config.Connection(builder.Configuration.GetConnectionString("CatalogDb")!);
 }).UseLightweightSessions();
-builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+builder.Services.AddValidatorsFromAssembly(thisAssembly);
 
 var app = builder.Build();
 

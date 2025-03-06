@@ -1,20 +1,19 @@
-﻿namespace Catalog.API.Products.CreateProduct;
+﻿using Microsoft.Extensions.Logging;
+
+namespace Catalog.API.Products.CreateProduct;
 
 public record CreateProductCommand(string Name, List<string> Category, string Description, string ImageFile, decimal Price)
     : ICommand<CreateProductCommandResult>;
 
 public record CreateProductCommandResult(Guid Id);
 
-internal class CreateProductCommandHandler(
-    IDocumentSession documentSession,
-    IValidator<CreateProductCommand> validator) 
+internal class CreateProductCommandHandler(IDocumentSession documentSession, ILogger<CreateProductCommandHandler> logger)
     : ICommandHandler<CreateProductCommand, CreateProductCommandResult>
 {
     public async Task<CreateProductCommandResult> Handle(CreateProductCommand command, CancellationToken cancellationToken)
     {
-        var validatorResult = await validator.ValidateAsync(command, cancellationToken);
-       
-        if (validatorResult.Errors.Any()) throw new ValidationException(validatorResult.Errors);
+
+        logger.LogInformation("CreateProductCommandHandler.Handle called with {@Command}", command);
 
         var product = command.Adapt<Product>();
 
@@ -26,13 +25,14 @@ internal class CreateProductCommandHandler(
     }
 }
 
-public class CreateProductCommandValidator : AbstractValidator<CreateProductCommand> {
+public class CreateProductCommandValidator : AbstractValidator<CreateProductCommand>
+{
     public CreateProductCommandValidator()
     {
         RuleFor(x => x.Name).NotEmpty().WithMessage("Name is required");
         RuleFor(x => x.Category).NotEmpty().WithMessage("Category is required");
         RuleFor(x => x.Description).NotEmpty().WithMessage("Description is required");
         RuleFor(x => x.ImageFile).NotEmpty().WithMessage("ImageFile is required");
-        RuleFor(x=> x.Price).GreaterThan(0).WithMessage("Price must be greater than 0");
+        RuleFor(x => x.Price).GreaterThan(0).WithMessage("Price must be greater than 0");
     }
 }
