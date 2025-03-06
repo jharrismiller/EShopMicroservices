@@ -1,4 +1,6 @@
 ﻿
+using Polly.Telemetry;
+
 namespace Catalog.API.Products.GetProductByCategory
 {
     public record GetProductByCategoryResponse(IEnumerable<Product> Products);
@@ -13,7 +15,9 @@ namespace Catalog.API.Products.GetProductByCategory
 
                 var results = await sender.Send(new GetProductByCategoryQuery(category));
 
-                return Results.Ok(new GetProductByCategoryResponse(results.Products));
+                var response = results.Adapt<GetProductByCategoryResponse>();
+
+                return Results.Ok(response);
 
             });
         }

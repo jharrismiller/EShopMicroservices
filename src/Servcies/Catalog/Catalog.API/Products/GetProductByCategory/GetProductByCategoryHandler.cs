@@ -1,4 +1,5 @@
-﻿using Marten.Linq.QueryHandlers;
+﻿using JasperFx.Core;
+using Marten.Util;
 
 namespace Catalog.API.Products.GetProductByCategory
 {
@@ -15,7 +16,7 @@ namespace Catalog.API.Products.GetProductByCategory
             logger.LogInformation("GetProductByCategoryQueryHandler.Handle called with ${Query}", query);
 
             var products = await documentSession.Query<Product>()
-                .Where(p => p.Category.Contains(query.Category))
+                .Where(p => p.Category.Any(c => c.EqualsIgnoreCase(query.Category)))
                 .ToListAsync();
 
             return new GetProductByCategoryQueryResult(products);
