@@ -12,6 +12,7 @@ internal class CreateProductCommandHandler(IDocumentSession documentSession) : I
         var product = command.Adapt<Product>();
 
         documentSession.Store(product);
+
         await documentSession.SaveChangesAsync(cancellationToken);
 
         return new CreateProductCommandResult(product.Id);
