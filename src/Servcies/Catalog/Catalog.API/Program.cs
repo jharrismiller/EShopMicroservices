@@ -1,3 +1,4 @@
+using Catalog.API.Data;
 using bb = BuildingBlocks;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,10 @@ builder.Services.AddMarten(config =>
 {
     config.Connection(builder.Configuration.GetConnectionString("CatalogDb")!);
 }).UseLightweightSessions();
+
+if (builder.Environment.IsDevelopment())
+    builder.Services.InitializeMartenWith<CatalogInitialData>();
+
 builder.Services.AddValidatorsFromAssembly(thisAssembly);
 builder.Services.AddExceptionHandler<bb.Exceptions.Handler.CustomExceptionHandler>();
 builder.Services.AddProblemDetails();
