@@ -10,6 +10,7 @@ builder.Services.AddMediatR(config =>
 {
     config.RegisterServicesFromAssembly(thisAssembly);
     config.AddOpenBehavior(typeof(bb.Behaviors.ValidationBehavior<,>));
+    config.AddOpenBehavior(typeof(bb.Behaviors.LoggingBehavior<,>));
 });
 builder.Services.AddMarten(config =>
 {
@@ -18,6 +19,7 @@ builder.Services.AddMarten(config =>
 builder.Services.AddValidatorsFromAssembly(thisAssembly);
 builder.Services.AddExceptionHandler<bb.Exceptions.Handler.CustomExceptionHandler>();
 builder.Services.AddProblemDetails();
+
 
 var app = builder.Build();
 

@@ -7,13 +7,11 @@ public record CreateProductCommand(string Name, List<string> Category, string De
 
 public record CreateProductCommandResult(Guid Id);
 
-internal class CreateProductCommandHandler(IDocumentSession documentSession, ILogger<CreateProductCommandHandler> logger)
+internal class CreateProductCommandHandler(IDocumentSession documentSession)
     : ICommandHandler<CreateProductCommand, CreateProductCommandResult>
 {
     public async Task<CreateProductCommandResult> Handle(CreateProductCommand command, CancellationToken cancellationToken)
     {
-
-        logger.LogInformation("CreateProductCommandHandler.Handle called with {@Command}", command);
 
         var product = command.Adapt<Product>();
 

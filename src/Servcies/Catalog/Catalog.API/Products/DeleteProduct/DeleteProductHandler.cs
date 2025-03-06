@@ -7,12 +7,10 @@ public record DeleteProductCommand(Guid Id) : ICommand<DeleteProductCommandResul
 
 public record DeleteProductCommandResult(bool IsSuccess);
 
-internal class DeleteProductCommandHandler(IDocumentSession documentSession, ILogger<DeleteProductCommandHandler> logger) : ICommandHandler<DeleteProductCommand, DeleteProductCommandResult>
+internal class DeleteProductCommandHandler(IDocumentSession documentSession) : ICommandHandler<DeleteProductCommand, DeleteProductCommandResult>
 {
     public async Task<DeleteProductCommandResult> Handle(DeleteProductCommand command, CancellationToken cancellationToken)
     {
-
-        logger.LogInformation("DeleteProductCommandHandler.Handle called with {@Command}", command);
 
         documentSession.Delete<Product>(command.Id);
 
