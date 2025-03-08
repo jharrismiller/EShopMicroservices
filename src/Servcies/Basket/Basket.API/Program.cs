@@ -26,6 +26,7 @@ builder.Services.AddExceptionHandler<bbExp.Handler.CustomExceptionHandler>();
 builder.Services.AddProblemDetails();
 //builder.Services.AddHealthChecks();
 
+builder.Services.AddScoped<IBasketRepository, BasketRepository>();
 
 var app = builder.Build();
 
