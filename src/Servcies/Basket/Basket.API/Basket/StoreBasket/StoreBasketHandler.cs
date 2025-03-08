@@ -4,10 +4,11 @@ public record StoreBasketCommand(ShoppingCart Cart) : ICommand<StoreBasketComman
 
 public record StoreBasketCommandResult(string UserName);
 
-internal class StoreBasketCommandHandler : ICommandHandler<StoreBasketCommand, StoreBasketCommandResult>
+internal class StoreBasketCommandHandler(IBasketRepository basketRepository) : ICommandHandler<StoreBasketCommand, StoreBasketCommandResult>
 {
     public async Task<StoreBasketCommandResult> Handle(StoreBasketCommand command, CancellationToken cancellationToken)
     {
+        await basketRepository.StoreBasket(command.Cart, cancellationToken);
         return new StoreBasketCommandResult(command.Cart.UserName);
     }
 }

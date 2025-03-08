@@ -2,12 +2,11 @@
 
 public record DeleteBasketCommand(string UserName) : ICommand<DeleteBasketCommandResult>;
 public record DeleteBasketCommandResult(bool IsSuccess);
-public class DeleteBasketCommandHandler : ICommandHandler<DeleteBasketCommand, DeleteBasketCommandResult>
+public class DeleteBasketCommandHandler(IBasketRepository basketRepository) : ICommandHandler<DeleteBasketCommand, DeleteBasketCommandResult>
 {
     public async Task<DeleteBasketCommandResult> Handle(DeleteBasketCommand command, CancellationToken cancellationToken)
     {
-
-
+        await basketRepository.DeleteBasket(command.UserName, cancellationToken);
         return new DeleteBasketCommandResult(true);
     }
 }
