@@ -1,8 +1,11 @@
 using bbExp = BuildingBlocks.Exceptions;
 using bbBhav = BuildingBlocks.Behaviors;
+using Discount.Grpc;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+#region "Application Services"
 
 var thisAssembly = typeof(Program).Assembly;
 
@@ -16,17 +19,42 @@ builder.Services.AddMediatR(config =>
     config.AddOpenBehavior(typeof(bbBhav.LoggingBehavior<,>));
 });
 
+#endregion
+
+#region "Data Services"
+
 builder.Services.AddMarten(config =>
 {
     config.Connection(cnBasketDb);
 }).UseLightweightSessions();
+
+builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+
+#endregion
+
+#region "Grpc Services"
+
+builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(options =>
+{
+    options.Address = new Uri(builder.Configuration["GrpcSettings:DiscountUrl"]!);
+});
+
+#endregion
+
+
+#region "Cross-Cutting Services"
 
 builder.Services.AddValidatorsFromAssembly(thisAssembly);
 builder.Services.AddExceptionHandler<bbExp.Handler.CustomExceptionHandler>();
 builder.Services.AddProblemDetails();
 //builder.Services.AddHealthChecks();
 
-builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+#endregion
+
+
+
+
+
 
 var app = builder.Build();
 
