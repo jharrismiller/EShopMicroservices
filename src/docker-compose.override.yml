@@ -34,8 +34,8 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
-      - ConnectionStrings__Database=Server=basketdb;Port=5434;Database=BasketDb;User Id=postgres;Password=postgres;Include Error Detail=true
-      - ConnectionString__Redis=distributedcache:6379
+      - ConnectionStrings__BasketDb=Server=basketdb;Port=5432;Database=BasketDb;User Id=postgres;Password=postgres;Include Error Detail=true
+      - ConnectionStrings__Redis=distributedcache:6379
     depends_on:
       - basketdb
       - distributedcache
