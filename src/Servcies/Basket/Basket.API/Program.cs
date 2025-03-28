@@ -1,6 +1,8 @@
 using bbExp = BuildingBlocks.Exceptions;
 using bbBhav = BuildingBlocks.Behaviors;
 using Discount.Grpc;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using HealthChecks.UI.Client;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -54,25 +56,22 @@ builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(
 builder.Services.AddValidatorsFromAssembly(thisAssembly);
 builder.Services.AddExceptionHandler<bbExp.Handler.CustomExceptionHandler>();
 builder.Services.AddProblemDetails();
-//builder.Services.AddHealthChecks();
+builder.Services.AddHealthChecks()
+    .AddNpgSql(builder.Configuration.GetConnectionString("BasketDb")!)
+    .AddRedis(builder.Configuration.GetConnectionString("Redis")!);
+
 
 #endregion
-
-
-
-
-
 
 var app = builder.Build();
 
 app.MapCarter();
 
 app.UseExceptionHandler();
-//app.UseHealthChecks("/health",
-//    new HealthCheckOptions
-//    {
-//        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-//    });
-
+app.UseHealthChecks("/health",
+    new HealthCheckOptions
+    {
+        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+    });
 
 app.Run();
