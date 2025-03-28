@@ -76,6 +76,5 @@ public class DiscountService(DiscountContext dbContext, ILogger<DiscountService>
         var response = new GetDiscountsResponse();
         response.Coupons.AddRange(await dbContext.Coupons.Select(x => x.Adapt<CouponSimple>()).ToArrayAsync());
         return response;
-        //return new GetDiscountsResponse() { Coupons = dbContext.Coupons.Select(x => x.Adapt<CouponSimple>()).ToArrayAsync() };
     }
 }
